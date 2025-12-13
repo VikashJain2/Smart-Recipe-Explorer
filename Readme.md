@@ -191,6 +191,28 @@ File upload (images)
 - Add / edit recipe modal & local validations:  (uses  in  and  )
 - API wrapper:  — provides  and .
 - Recipe pages: , 
+ - Recipe pages: , 
+
+## Postman Collection
+
+- File: [Smart Recipe Explorer.postman_collection.json](Smart%20Recipe%20Explorer.postman_collection.json)
+- Import: In Postman use **File → Import → Choose Files** and select the JSON above.
+- Contents: the collection includes two folders — `Recipes` and `Gen AI` with these requests:
+  - Recipes: `Get All Recipes`, `Get Recipe By Id`, `Create Recipe`
+  - Gen AI: `Suggest Recipes`, `Generate Recipe`, `Simplify Recipe`, `Analyze Nutrition`
+- Quick tips:
+  - Set the base URL to `http://localhost:3000` (adjust port if your backend uses a different port).
+  - To run the `Create Recipe` request from the collection, the body is raw JSON (example inside collection). Example curl equivalent:
+
+    ```sh
+    curl -X POST http://localhost:3000/api/recipes \
+      -H "Content-Type: application/json" \
+      -d '{"name":"Paneer Butter Masala","cuisine":"Indian","isVegetarian":true,"prepTimeMinutes":30}'
+    ```
+
+  - For file uploads (images) use the `POST /api/file/upload` entry and send a `form-data` field named `image`.
+
+- Use this collection to quickly test endpoints or convert to other formats (OpenAPI, curl scripts, etc.).
 
 ---
 

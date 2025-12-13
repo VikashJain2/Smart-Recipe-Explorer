@@ -1,0 +1,253 @@
+{
+	"info": {
+		"_postman_id": "da36076c-fa2e-4cd1-81c8-cf2e488f5f3d",
+		"name": "Smart Recipe Explorer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40118025"
+	},
+	"item": [
+		{
+			"name": "Recipes",
+			"item": [
+				{
+					"name": "Get All Recipes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/recipes?search=paneer&cuisine=Indian&isVegetarian=true&minTime=10&maxTime=60&difficulty=medium&tags=paneer&ingredients=tomato&sortBy=newest&order=desc&page=1&limit=12\n",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"recipes"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "paneer"
+								},
+								{
+									"key": "cuisine",
+									"value": "Indian"
+								},
+								{
+									"key": "isVegetarian",
+									"value": "true"
+								},
+								{
+									"key": "minTime",
+									"value": "10"
+								},
+								{
+									"key": "maxTime",
+									"value": "60"
+								},
+								{
+									"key": "difficulty",
+									"value": "medium"
+								},
+								{
+									"key": "tags",
+									"value": "paneer"
+								},
+								{
+									"key": "ingredients",
+									"value": "tomato"
+								},
+								{
+									"key": "sortBy",
+									"value": "newest"
+								},
+								{
+									"key": "order",
+									"value": "desc"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "12\n"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Recipe By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/recipes/693be9c4a9add7bb7f852836",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"recipes",
+								"693be9c4a9add7bb7f852836"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Recipe",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Paneer Butter Masala\",\r\n  \"cuisine\": \"Indian\",\r\n  \"isVegetarian\": true,\r\n  \"prepTimeMinutes\": 30,\r\n  \"cookTimeMinutes\": 20,\r\n  \"servings\": 4,\r\n  \"ingredients\": [\r\n    \"200g paneer\",\r\n    \"2 tomatoes\",\r\n    \"1 onion\",\r\n    \"1 tbsp ginger garlic paste\",\r\n    \"1 tsp red chili powder\",\r\n    \"1 tbsp butter\"\r\n  ],\r\n  \"instructions\": \"Heat butter, add onions, tomato puree, spices, and paneer. Cook until creamy.\",\r\n  \"difficulty\": \"medium\",\r\n  \"tags\": [\"paneer\", \"curry\", \"indian\"],\r\n  \"imageUrl\": \"https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg\",\r\n  \"calories\": 410,\r\n  \"createdBy\": \"Postman Test\",\r\n  \"isFavorite\": false,\r\n  \"rating\": 4.5,\r\n  \"views\": 10\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/recipes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"recipes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Gen AI",
+			"item": [
+				{
+					"name": "Suggest Recipes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"ingredients\": [],\r\n  \"cuisine\": \"Italian\",\r\n  \"difficulty\": \"medium\",\r\n  \"prepTime\": \"30\",\r\n  \"mealType\": \"dinner\",\r\n  \"isVegetarian\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/ai/suggest",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"ai",
+								"suggest"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generate Recipe",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"description\": \"A quick and healthy vegetarian pasta dish with fresh vegetables\",\r\n  \"cuisine\": \"Italian\",\r\n  \"mealType\": \"dinner\",\r\n  \"dietaryRestrictions\": \"vegetarian, gluten-free\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/ai/generate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"ai",
+								"generate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Simplify Recipe",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n\r\n{\r\n  \"complexity\": \"beginner\",\r\n  \"language\": \"hindi\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/ai/simplify/693bed625f74d9e2e7139ffe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"ai",
+								"simplify",
+								"693bed625f74d9e2e7139ffe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Analyze Nutrition",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/ai/analyze/693bed625f74d9e2e7139ffe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"ai",
+								"analyze",
+								"693bed625f74d9e2e7139ffe"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
