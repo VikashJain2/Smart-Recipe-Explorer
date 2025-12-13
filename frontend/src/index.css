@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900;
+    overflow-x: hidden;
+  }
+  
+  ::selection {
+    @apply bg-yellow-200 text-gray-900;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 
+           transition-all duration-200 font-medium flex items-center justify-center 
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 border border-gray-300 text-gray-700 rounded-lg 
+           hover:bg-gray-50 transition-all duration-200 font-medium;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow 
+           duration-300 overflow-hidden;
+  }
+  
+  .input-primary {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-lg 
+           focus:ring-2 focus:ring-yellow-500 focus:border-transparent 
+           transition-all duration-200;
+  }
+  
+  .badge {
+    @apply px-2 py-1 text-xs font-semibold rounded-full;
+  }
+  
+  .badge-vegetarian {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .badge-non-veg {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  .badge-easy {
+    @apply bg-blue-100 text-blue-800;
+  }
+  
+  .badge-medium {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+  
+  .badge-hard {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  .loader {
+    @apply w-12 h-12 border-4 border-yellow-500 border-t-transparent 
+           rounded-full animate-spin;
+  }
+  
+  .modal-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center 
+           justify-center p-4 z-50;
+  }
+  
+  .modal-content {
+    @apply bg-white rounded-2xl shadow-2xl w-full max-w-2xl 
+           max-h-[90vh] overflow-y-auto;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-yellow-400 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-yellow-500;
+}
+
+/* Smooth transitions */
+.fade-enter {
+  opacity: 0;
+}
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+.fade-exit {
+  opacity: 1;
+}
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+}
+
+/* Recipe card animations */
+.recipe-card {
+  transition: all 0.3s ease;
+}
+
+.recipe-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Loading animation */
+.loading-dots:after {
+  content: '.';
+  animation: dots 1.5s steps(5, end) infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
