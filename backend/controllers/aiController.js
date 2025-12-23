@@ -1,10 +1,89 @@
 import GROQ from "groq-sdk";
 import Recipe from "../models/Recipe.js";
-
+import { tavily } from "@tavily/core";
+const tvly = tavily({
+  apiKey: process.env.TAVILY_API_KEY,
+});
 const groqClient = new GROQ({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+const tools = [
+  {
+    type: "function",
+    function: {
+      name: "search_recipe_image",
+      description: "Search for recipe images based on a query",
+      parameters: {
+        type: "object",
+        properties: {
+          recipeName: {
+            type: "string",
+          },
+          cuisine: {
+            type: "string",
+          },
+        },
+        required: ["recipeName"],
+      },
+    },
+  },
+];
+
+const toolHandlers = {
+  search_recipe_image: async ({ recipeName, cuisine }) => {
+    const query = `${recipeName} ${cuisine || ""} food dish`;
+
+    const result = await tvly.search(query,{
+      
+      includeImages: true,
+      max_results: 5,
+    });
+
+    return {
+      imageUrl:
+        result?.images?.[0] ||
+        result?.results.find((r) => r.image)?.image ||
+        "",
+    };
+  },
+};
+
+const runWithTools = async (options) => {
+  let response = await groqClient.chat.completions.create({
+    ...options,
+    tools,
+    tool_choice: "auto",
+  });
+
+  let message = response?.choices[0]?.message;
+
+  while (message?.tool_calls?.length) {
+    for (let call of message.tool_calls) {
+      const handler = toolHandlers[call.function.name];
+      const args = JSON.parse(call.function.arguments);
+      const toolResult = await handler(args);
+
+      options.messages.push(message);
+      options.messages.push({
+        tool_call_id: call.id,
+        role: "tool",
+        name: call.function.name,
+        content: JSON.stringify(toolResult),
+      });
+    }
+
+    response = await groqClient.chat.completions.create({
+      ...options,
+      response_format: {
+        type: "json_object",
+      },
+    });
+
+    message = response?.choices[0]?.message;
+  }
+  return message.content;
+};
 const JSONFormatExample = `
 {
   "name": "Recipe name",
@@ -22,20 +101,62 @@ const JSONFormatExample = `
 }
 
 example:
-{
-  "name": "Vegetable Stir Fry",
-  "cuisine": "Chinese",
-  "prepTimeMinutes": 15,
-  "cookTimeMinutes": 10,
-  "difficulty": "easy",
-  "ingredients": ["Broccoli", "Carrot", "Bell Pepper", "Soy Sauce", "Garlic"],
-  "instructions": ["1. Chop veggies.", "2. Stir fry in wok with garlic and soy sauce."],
-  "tags": ["vegetarian", "quick", "healthy"],
-  "isVegetarian": true,
-  "calories": 250,
-  "servings": 2,
-  "imageUrl": "https://example.com/veg-stir-fry.jpg"
-}
+"suggestions": [
+        {
+            "name": "Paneer and Bell Pepper Curry",
+            "cuisine": "Indian",
+            "prepTimeMinutes": 20,
+            "cookTimeMinutes": 25,
+            "difficulty": "medium",
+            "ingredients": [
+                "paneer",
+                "bell peppers",
+                "spices"
+            ],
+            "instructions": [
+                "1. Heat oil in a pan over medium heat (350°F/175°C).",
+                "2. Add spices and sauté for 1 minute.",
+                "3. Add bell peppers and cook until tender.",
+                "4. Add paneer and stir well.",
+                "5. Serve hot."
+            ],
+            "tags": [
+                "vegetarian",
+                "curry"
+            ],
+            "isVegetarian": true,
+            "calories": 400,
+            "servings": 4,
+            "imageUrl": "https://i.pinimg.com/originals/34/d8/a7/34d8a71525ab8fc7514922328a54a206.jpg"
+        },
+        {
+            "name": "Paneer and Bell Pepper Stir Fry",
+            "cuisine": "Indian",
+            "prepTimeMinutes": 15,
+            "cookTimeMinutes": 15,
+            "difficulty": "medium",
+            "ingredients": [
+                "paneer",
+                "bell peppers",
+                "spices"
+            ],
+            "instructions": [
+                "1. Heat oil in a wok over high heat (450°F/230°C).",
+                "2. Add spices and stir fry for 1 minute.",
+                "3. Add bell peppers and cook until tender.",
+                "4. Add paneer and stir well.",
+                "5. Serve hot."
+            ],
+            "tags": [
+                "vegetarian",
+                "stir fry"
+            ],
+            "isVegetarian": true,
+            "calories": 350,
+            "servings": 3,
+            "imageUrl": "https://i.pinimg.com/originals/34/d8/a7/34d8a71525ab8fc7514922328a54a206.jpg"
+        }
+    ],
 `;
 
 // -------------------- Safe JSON Parse --------------------
@@ -115,22 +236,20 @@ Return a **JSON array** only, same structure as above.
 3. Return only JSON, no extra text.`;
     }
 
-    const chatCompletion = await groqClient.chat.completions.create({
+    const chatCompletion = await runWithTools({
       messages: [
         {
           role: "system",
           content:
-            "You are a professional chef and recipe expert. Always respond with valid JSON.",
+            "You are a professional chef and recipe expert. Always respond with valid JSON. If you do not already know a real image URL, you MUST call the tool search_recipe_image. Do NOT invent image URLs.",
         },
         { role: "user", content: prompt },
       ],
       model: "llama-3.3-70b-versatile",
       temperature: 0.7,
-      response_format: { type: "json_object" },
     });
 
-    const aiResponse = safeParseJSON(
-      chatCompletion.choices[0]?.message?.content
+    const aiResponse = safeParseJSON(chatCompletion
     );
 
     return res.json({
@@ -139,7 +258,7 @@ Return a **JSON array** only, same structure as above.
         ingredients.length === 0
           ? "Popular recipe suggestions"
           : `Recipes suggested for: ${ingredients.join(", ")}`,
-      suggestions: aiResponse || [],
+       suggestions:aiResponse.suggestions,
       tip: "You can save any of these recipes to your collection",
       usage: chatCompletion.usage,
     });
@@ -314,22 +433,20 @@ example:
 
 Use realistic values for calories and rating. Return only valid JSON, no extra text.`;
 
-    const chatCompletion = await groqClient.chat.completions.create({
+    const chatCompletion = await runWithTools({
       messages: [
         {
           role: "system",
           content:
-            "You are a creative chef that generates original recipes based on descriptions.",
+            "You are a creative chef that generates original recipes based on descriptions.If you do not already know a real image URL, you MUST call the tool search_recipe_image. Do NOT invent image URLs.",
         },
         { role: "user", content: prompt },
       ],
       model: "llama-3.3-70b-versatile",
       temperature: 0.8,
-      response_format: { type: "json_object" },
     });
 
-    const generatedRecipe = safeParseJSON(
-      chatCompletion.choices[0]?.message?.content
+    const generatedRecipe = safeParseJSON(chatCompletion
     ) || {
       name: "AI Generated Recipe",
       cuisine: cuisine || "Unknown",

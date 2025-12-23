@@ -132,7 +132,7 @@ const samplePrompts = {
   if (!Array.isArray(instructions)) return instructions || "";
 
   return instructions
-    .map((step, index) => `${index + 1}. ${step}`)
+    .map((step) => `${step}`)
     .join("\n");
 };
 

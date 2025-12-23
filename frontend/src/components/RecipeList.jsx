@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import RecipeCard from './RecipeCard';
 import SearchFilter from './SearchFilter';
 import LoadingSpinner from './LoadingSpinner';
-import { FiFilter, FiGrid, FiList, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiFilter, FiGrid, FiList, FiChevronLeft, FiChevronRight, FiRefreshCw } from 'react-icons/fi';
 import { recipeApi } from '../services/api';
 
 const RecipeList = () => {
@@ -109,6 +109,12 @@ const RecipeList = () => {
         <div className="flex items-center space-x-4">
           {/* View Mode Toggle */}
           <div className="flex items-center bg-gray-100 rounded-lg p-1">
+             <button
+              onClick={() => fetchRecipes()}
+              className={`p-2 rounded ${viewMode === 'list' ? 'bg-white shadow' : 'hover:bg-gray-200'}`}
+            >
+              <FiRefreshCw className={viewMode === 'list' ? 'text-yellow-600' : 'text-gray-500'} />
+            </button>
             <button
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded ${viewMode === 'grid' ? 'bg-white shadow' : 'hover:bg-gray-200'}`}

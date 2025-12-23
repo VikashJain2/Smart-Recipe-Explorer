@@ -79,6 +79,7 @@ export const parseAISuggestion = (suggestion) => {
         : (recipeData.tags || "").split(",").map((t) => t.trim()),
       calories: recipeData.calories || 0,
       createdBy: "AI Assistant",
+      imageUrl: recipeData.imageUrl
     };
   } catch (error) {
     console.error("Error parsing AI suggestion:", error);

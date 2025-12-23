@@ -37,8 +37,10 @@ const RecipeCard = ({ recipe, viewMode = 'grid' }) => {
               <div className="h-48 md:h-full relative overflow-hidden">
                 {recipe.imageUrl ? (
                   <img
+                  
                     src={recipe.imageUrl}
                     alt={recipe.name}
+                    loading="lazy"
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
@@ -84,15 +86,7 @@ const RecipeCard = ({ recipe, viewMode = 'grid' }) => {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="flex items-center text-yellow-500 mb-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <FiStar
-                        key={star}
-                        className={star <= Math.floor(recipe.rating || 0) ? 'fill-current' : ''}
-                      />
-                    ))}
-                    <span className="ml-1 text-sm text-gray-600">({recipe.rating || '0'})</span>
-                  </div>
+                
                   <div className="text-sm text-gray-500 flex items-center">
                     <FiEye className="mr-1" />
                     {recipe.views || 0} views
@@ -144,6 +138,7 @@ const RecipeCard = ({ recipe, viewMode = 'grid' }) => {
             <img
               src={recipe.imageUrl}
               alt={recipe.name}
+              loading='lazy'
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
             />
           ) : (
